@@ -2,7 +2,7 @@ from datasets import load_dataset
 import time
 from mlx_lm import load, generate
 
-QUESTIONS_TO_EVALUATE = 1
+QUESTIONS_TO_EVALUATE = 50
 MODELS_TO_USE = [
     # "mlx-community/DeepSeek-R1-Distill-Qwen-14B-3bit",
     "mlx-community/DeepSeek-R1-Distill-Qwen-7B-4bit",
