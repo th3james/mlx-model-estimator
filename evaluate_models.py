@@ -1,5 +1,7 @@
-from datasets import load_dataset
 import time
+from dataclasses import dataclass
+
+from datasets import load_dataset
 from mlx_lm import load, generate
 
 QUESTIONS_TO_EVALUATE = 50
@@ -24,27 +26,28 @@ Answer: A
 """
 
 
-class ModelEval:
-    def __init__(self, model_to_use):
-        self.model_to_use = model_to_use
-        self.local_model, self.tokenizer = load(self.model_to_use)
+@dataclass
+class LoadedModel:
+    model: any  # The MLX model
+    tokenizer: any  # The tokenizer
 
-    def generate_answer(self, prompt: str) -> str:
-        messages = [
-            {"role": "system", "content": ARC_SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ]
-        prompt = self.tokenizer.apply_chat_template(
-            messages, add_generation_prompt=True, max=1000
-        )
-        text = generate(
-            self.local_model,
-            self.tokenizer,
-            prompt=prompt,
-            verbose=False,
-            max_tokens=1000,
-        )
-        return text
+
+def generate_answer(loaded_model: LoadedModel, prompt: str) -> str:
+    messages = [
+        {"role": "system", "content": ARC_SYSTEM_PROMPT},
+        {"role": "user", "content": prompt},
+    ]
+    prompt = loaded_model.tokenizer.apply_chat_template(
+        messages, add_generation_prompt=True, max=1000
+    )
+    text = generate(
+        loaded_model.model,
+        loaded_model.tokenizer,
+        prompt=prompt,
+        verbose=False,
+        max_tokens=1000,
+    )
+    return text
 
 
 def extract_answer(output: str) -> str:
@@ -57,7 +60,6 @@ def extract_answer(output: str) -> str:
     return "Failed to extract answer"
 
 
-
 # Load allenai/ai2_arc dataset
 dataset = load_dataset(
     "allenai/ai2_arc", "ARC-Easy", split=f"test[:{QUESTIONS_TO_EVALUATE}]"
@@ -68,7 +70,8 @@ model_stats = {model: {} for model in MODELS_TO_USE}
 
 for model in MODELS_TO_USE:
     question_count = 0
-    evaluator = ModelEval(model)
+    local_model, tokenizer = load(model)
+    loaded_model = LoadedModel(model=local_model, tokenizer=tokenizer)
     total_tokens = 0
     start_time = time.time()
 
@@ -79,9 +82,8 @@ for model in MODELS_TO_USE:
         prompt = (
             f"Question: {example['question']}\nOptions: {example['choices']}\nAnswer:"
         )
-        output = evaluator.generate_answer(prompt)
-        # Estimate tokens by counting words (rough approximation)
-        total_tokens += len(output.split())
+        output = generate_answer(loaded_model, prompt)
+        total_tokens += len(tokenizer.encode(output))
         extracted_answer = extract_answer(output)
         print(f"Extracted answer: {extracted_answer}")
         answers[model].append(extracted_answer)
@@ -94,7 +96,6 @@ for model in MODELS_TO_USE:
         "tokens_per_second": total_tokens / total_time,
     }
 
-# Calculate accuracy for each model
 accuracies = {}
 for model in MODELS_TO_USE:
     correct = 0
@@ -105,7 +106,6 @@ for model in MODELS_TO_USE:
     accuracy = (correct / total) * 100
     accuracies[model] = accuracy
 
-# Print results
 print("\n")
 print(f"Model Performance for {QUESTIONS_TO_EVALUATE} questions")
 print("-" * 50)
