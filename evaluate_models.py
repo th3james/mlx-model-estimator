@@ -6,17 +6,17 @@ from mlx_lm import load, generate
 
 QUESTIONS_TO_EVALUATE = 50
 MODELS_TO_USE = [
+    "mlx-community/Qwen3-14B-4bit",
+    "mlx-community/gemma-3-12b-it-4bit",
+    # "mlx-community/DeepSeek-R1-Distill-Qwen-14B-4bit",
     # "mlx-community/DeepSeek-R1-Distill-Qwen-14B-3bit",
-    "mlx-community/DeepSeek-R1-Distill-Qwen-7B-4bit",
+    # "mlx-community/DeepSeek-R1-Distill-Qwen-7B-4bit",
     # "mlx-community/DeepSeek-R1-Distill-Qwen-7B-3bit",
     # "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-bf16",
-    "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit",
+    # "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit",
     # "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-6bit",
     # "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit",
     # "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-3bit",
-    # "mlx-community/Meta-Llama-3-8B-Instruct-4bit",
-    # "mlx-community/phi-4-4bit",
-    # "mlx-community/Llama-3.2-3B-Instruct-4bit",
 ]
 ARC_SYSTEM_PROMPT = """
 You are a helpful assistant that answers questions. You are given a question and a set of options.
