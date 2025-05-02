@@ -5,10 +5,10 @@ Lots of quantised model variants are published to [mlx-community on Hugging Face
 This python snippet grabs a selection of models and runs [Arc-Easy](https://huggingface.co/datasets/allenai/ai2_arc) to provide an estimate of how much the model has been degraded by quantisation. It also provides very rough timing numbers.
 
 ## Install
-Tested with Python 3.12
+Uses [https://github.com/astral-sh/uv](astral-sh/uv) for package management
 
 ```sh
-pip install -r requirements.txt
+uv sync
 ```
 
 ## Configure
@@ -18,5 +18,5 @@ Set the HF models you want to test and configure the number of questions by edit
 ## Run
 
 ```sh
-python evaluate_models.py
+uv run evaluate_models.py
 ```

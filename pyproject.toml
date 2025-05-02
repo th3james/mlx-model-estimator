@@ -1,0 +1,11 @@
+[project]
+name = "mlx-model-estimator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "cmake==3.31.6",
+    "datasets>=3.5.1",
+    "mlx-lm>=0.24.0",
+]
